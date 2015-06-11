@@ -70,7 +70,7 @@ if __name__ == "__main__":
 		n = randint(1, max_n)
 		m = randint(1, max_m)
 		case = generate_test_case(n, m)
-		print_case(case)
+		print_case(case, n, m)
 
 
 

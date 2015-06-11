@@ -62,16 +62,24 @@ def solution_tester(solution, customers):
 				continue
 	return False not in customer_satisfaction
 
-#solution = [int(x) for x in sys.argv[2].split()]
-solution = [randint(0, 1) for i in range(int(sys.argv[2]))]
-
 if __name__ == '__main__':
-	filename = sys.argv[1]
-	with open(filename, 'r') as f:
-		n_cases = int(f.readline())
-		for i in range(n_cases):
-			customers = read_case(f)
-			if not solution_tester(solution, customers):
-				print "Case #" + str(i + 1) + ": IMPOSSIBLE"
-			else:
-				print "Case #" + str(i + 1) + ": " + " ".join([str(x) for x in solution])
+	# Check if the solution is provided by cmd line.
+	print len(sys.argv)
+	if len(sys.argv) > 3:
+		solution = [int(t) for t in sys.argv[4].split()]
+	else:
+		solution = [randint(0, 1) for i in range(int(sys.argv[2]))]
+	if len(solution) < int(sys.argv[2]):
+		print '''The solution must contain at least the same number of max colors
+		the customers may require.'''
+	else:
+		# Read file
+		filename = sys.argv[1]
+		with open(filename, 'r') as f:
+			n_cases = int(f.readline())
+			for i in range(n_cases):
+				customers = read_case(f)
+				if not solution_tester(solution, customers):
+					print "Case #" + str(i + 1) + ": IMPOSSIBLE"
+				else:
+					print "Case #" + str(i + 1) + ": " + " ".join([str(x) for x in solution])
