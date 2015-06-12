@@ -55,4 +55,5 @@ class Parser:
 	'''
 	def read_customer_types(self, t):
 		raw_list = t.split()
-		return [[raw_list[i], raw_list[i + 1]] for i in range(2, len(raw_list) - 1)]
+		l = [raw_list[i] + " " + raw_list[i + 1] for i in range(1, len(raw_list), 2)]
+		return l

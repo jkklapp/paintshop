@@ -2,6 +2,7 @@
 
 from tester import Tester
 from random import randint
+from math import pow
 
 class Optimizer:
 	"""
@@ -16,7 +17,13 @@ class Optimizer:
 		self.solution = solution
 		self.case = case
 		self.tester = Tester()
+		self.valid_solution = False
 		self.steps = 0
+		self.METHODS = {
+			'random_optimizer': self.random_optimizer,
+			'matte_minimizer': self.matte_minimizer,
+			'targeted_color_optimizer': self.targeted_color_optimizer
+		}
 
 	'''
 		Generates the optimal naive solution.
@@ -45,6 +52,7 @@ class Optimizer:
 			position switched.
 	'''
 	def change_solution(self, solution, i):
+		print i
 		solution[i] += 1
 		solution[i] = solution[i] % 2
 		return solution
@@ -62,15 +70,14 @@ class Optimizer:
 			The first solution that satisfies
 	'''
 	def random_optimizer(self):
-		solution = self.solution
 		tester = self.tester
 		case = self.case
-		i = 0
-		while not tester.is_valid_solution(solution, case):
-			solution = self.change_solution(solution, randint(0, len(solution) - 1))
-			i += 1
-		self.steps = i
-		self.solution = solution
+		s = self.solution
+		#if not self.tester.is_valid_solution(solution, case):
+		self.solution = self.change_solution(s, self.steps % len(s))
+		self.steps += 1
+		self.is_valid_solution = self.tester.is_valid_solution(self.solution, case)
+		##self.steps = i
 
 	'''
 		Tries to improve a solution incrementally.
@@ -94,6 +101,7 @@ class Optimizer:
 			if not tester.is_valid_solution(solution, case):
 				solution = self.change_solution(solution, i-1)
 			else:
+				self.is_valid_solution = True
 				break
 		self.steps = i
 		self.solution = solution
@@ -114,8 +122,6 @@ class Optimizer:
 		solution = self.solution
 		tester = self.tester
 		case = self.case
-		print tester.colors_to_inspect
-		print tester.already_sold
 		i = 0
 		for j in tester.colors_to_inspect:
 			if j in tester.already_sold:
@@ -125,6 +131,7 @@ class Optimizer:
 			if not tester.is_valid_solution(solution, case):
 				solution = self.change_solution(solution, j-1)
 			else:
+				self.is_valid_solution = True
 				break
 		self.steps = i
 		self.solution = solution
@@ -132,15 +139,19 @@ class Optimizer:
 	'''
 		Executes the optmization:
 	'''
-	def optimize(self, method='random_optimizer'):
-		self.method(self.solution)
+	def optimize(self, method):
+		while not self.valid_solution and not self.tester.impossible and self.steps < pow(2, len(self.solution)):
+			self.METHODS[method]()
 
 	'''
 		Prints results
 	'''
 	def get_solution(self):
 		tester = self.tester
-		if tester.is_valid_solution(self.solution, self.case):
-			return " ".join(self.solution)
-		else:
+		print self.valid_solution
+		print self.tester.impossible
+		if (self.tester.impossible):
 			return "IMPOSSIBLE"
+		else:
+			return " ".join([str(s) for s in self.solution])
+		
