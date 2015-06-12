@@ -52,7 +52,6 @@ class Optimizer:
 			position switched.
 	'''
 	def change_solution(self, solution, i):
-		print i
 		solution[i] += 1
 		solution[i] = solution[i] % 2
 		return solution
@@ -73,11 +72,9 @@ class Optimizer:
 		tester = self.tester
 		case = self.case
 		s = self.solution
-		#if not self.tester.is_valid_solution(solution, case):
 		self.solution = self.change_solution(s, self.steps % len(s))
 		self.steps += 1
-		self.is_valid_solution = self.tester.is_valid_solution(self.solution, case)
-		##self.steps = i
+		self.valid_solution = self.tester.is_valid_solution(self.solution, case)
 
 	'''
 		Tries to improve a solution incrementally.
@@ -101,9 +98,9 @@ class Optimizer:
 			if not tester.is_valid_solution(solution, case):
 				solution = self.change_solution(solution, i-1)
 			else:
-				self.is_valid_solution = True
+				self.valid_solution = True
 				break
-		self.steps = i
+		self.steps += i
 		self.solution = solution
 
 
@@ -131,25 +128,29 @@ class Optimizer:
 			if not tester.is_valid_solution(solution, case):
 				solution = self.change_solution(solution, j-1)
 			else:
-				self.is_valid_solution = True
+				self.valid_solution = True
 				break
-		self.steps = i
+		self.steps += i
 		self.solution = solution
 
 	'''
 		Executes the optmization:
 	'''
 	def optimize(self, method):
-		while not self.valid_solution and not self.tester.impossible and self.steps < pow(2, len(self.solution)):
-			self.METHODS[method]()
+		self.original_solution = self.solution
+		self.valid_solution = self.tester.is_valid_solution(self.solution, self.case)
+		self.steps = 0
+		while self.steps < pow(2, len(self.solution)):
+			if self.valid_solution or self.tester.impossible:
+				break
+			else:
+				self.METHODS[method]()
 
 	'''
 		Prints results
 	'''
 	def get_solution(self):
 		tester = self.tester
-		print self.valid_solution
-		print self.tester.impossible
 		if (self.tester.impossible):
 			return "IMPOSSIBLE"
 		else:
