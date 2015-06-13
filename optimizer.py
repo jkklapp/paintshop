@@ -21,8 +21,7 @@ class Optimizer:
 		self.steps = 0
 		self.METHODS = {
 			'random_optimizer': self.random_optimizer,
-			'matte_minimizer': self.matte_minimizer,
-			'targeted_color_optimizer': self.targeted_color_optimizer
+			'matte_minimizer': self.matte_minimizer
 		}
 
 	'''
@@ -39,7 +38,7 @@ class Optimizer:
 			A list of n 0s. 
 	'''
 	def generate_naive_solution(self, n):
-		return [0 for i in range(n)]
+		return ['0' for i in range(n)]
 
 	'''
 		Modifies a solution.
@@ -52,8 +51,10 @@ class Optimizer:
 			position switched.
 	'''
 	def change_solution(self, solution, i):
-		solution[i] += 1
-		solution[i] = solution[i] % 2
+		if solution[i] == '1':
+			solution[i] = '0'
+		else:
+			solution[i] = '1'
 		return solution
 
 	'''
@@ -68,13 +69,17 @@ class Optimizer:
 		Returns
 			The first solution that satisfies
 	'''
-	def random_optimizer(self):
+	def random_optimizer(self, i=1):
 		tester = self.tester
 		case = self.case
 		s = self.solution
-		self.solution = self.change_solution(s, self.steps % len(s))
-		self.steps += 1
-		self.valid_solution = self.tester.is_valid_solution(self.solution, case)
+		for k in range(i):
+			valid = self.tester.is_valid_solution(self.solution, case)
+			if valid:
+				break
+			self.solution = self.change_solution(s, k % len(s))
+		self.steps += i
+		self.valid_solution = valid
 
 	'''
 		Tries to improve a solution incrementally.
@@ -97,36 +102,6 @@ class Optimizer:
 			i += 1
 			if not tester.is_valid_solution(solution, case):
 				solution = self.change_solution(solution, i-1)
-			else:
-				self.valid_solution = True
-				break
-		self.steps += i
-		self.solution = solution
-
-
-	'''
-		Looks only into specific colors to get a better solution
-
-		This method generates a solution that satisfies, and
-		then tries to turn 1s into 0s until it no longer satisfies.
-
-		Args:
-			solution: A solution candidate. None will use the optimal naive solution.
-		Returns
-			The first solution that satisfies.
-	'''
-	def targeted_color_optimizer(self):
-		solution = self.solution
-		tester = self.tester
-		case = self.case
-		i = 0
-		for j in tester.colors_to_inspect:
-			if j in tester.already_sold:
-				continue
-			solution = self.change_solution(solution, j-1)
-			i += 1
-			if not tester.is_valid_solution(solution, case):
-				solution = self.change_solution(solution, j-1)
 			else:
 				self.valid_solution = True
 				break

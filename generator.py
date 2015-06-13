@@ -60,12 +60,12 @@ class Generator:
 			customer_choices = sample(range(1, n + 1), n_customer_types)
 			for j in customer_choices:
 				if already_chosen_matte:
-					variety = 0
+					variety = '0'
 				else:
-					variety = randint(0, 1)
-					if variety == 1:
+					variety = ['0', '1'][randint(0, 1)]
+					if variety == '1':
 						already_chosen_matte = True
-				type_of_color += " " + str(j) + " " + str(variety)
+				type_of_color += " " + str(j) + " " + variety
 			case.append(str(n_customer_types) + type_of_color)
 		return [n, m, case]
 

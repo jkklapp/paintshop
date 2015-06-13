@@ -9,16 +9,7 @@ from random import randint
 class Tester:
 
 	def __init__(self):
-		self.colors_to_inspect = []
 		self.impossible = False
-
-	def update_colors_to_inspect(self, satisfaction, customers):
-		for i in range(len(satisfaction)):
-			if not satisfaction[i]:
-				for t in customers[i]:
-					color = int(t[0])
-					if color not in self.colors_to_inspect:
-						self.colors_to_inspect.append(color)
 
 	'''
 		Expands a candidate solution to the max number of
@@ -27,7 +18,7 @@ class Tester:
 	def merge_with_expanded(self, candidate, expanded_candidates):
 		for t in candidate:
 			i = int(t.split()[0]) - 1
-			variety = int(t.split()[1])
+			variety = t.split()[1]
 			for e in expanded_candidates:
 				e[i] = variety
 		return expanded_candidates
@@ -91,7 +82,7 @@ class Tester:
 		p = self.get_rid_of_useless_products(products)
 		all_possible_sols = []
 		for candidate in p:
-			expanded_candidates = [list(x) for x in comb((0, 1), len(solution))]
+			expanded_candidates = [list(x) for x in comb(('0', '1'), len(solution))]
 			all_possible_sols += self.merge_with_expanded(candidate, expanded_candidates)
 		if len(all_possible_sols) == 0:
 			self.impossible = True

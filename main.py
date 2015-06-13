@@ -5,28 +5,66 @@ from tester import Tester
 from parser import Parser
 from optimizer import Optimizer
 
-import sys, os
+import sys, os, argparse
+
+
+def write_case(c, n, m, f=None):
+	gen = Generator(n, m)
+	gen.generate_test_cases(c)
+	gen.print_test_cases(c)
+	if f:
+		gen.print_test_cases_to_file(c, f)
+
+def read_and_solve_case(input, method, out=None):
+	parser = Parser(input)
+	opt = Optimizer([], [])
+	if out:
+		output_file = open(out, 'w')
+	for i in range(parser.c):
+		opt.case = parser.read_next_case()
+		opt.solution = [0 for j in range(parser.current_n)]
+		opt.optimize(method)
+		print "Case #" + str(i + 1) + ": " + opt.get_solution()
+		if out:
+			output_file.write("Case #" + str(i + 1) + ": " + opt.get_solution())
+	if out:
+		output_file.close()
+
 
 if __name__ == '__main__':
 	# Check if the solution is provided by cmd line.
 
-	if len(sys.argv) not in [4, 5]:
-		print '''Usage: ./main.py <# test cases> <max #colors> <max # customers> [optimization_method]'''
-	else:
-		# Write file
-		max_n = int(sys.argv[2])
-		max_m = int(sys.argv[3])
-		c = int(sys.argv[1])
-		method = sys.argv[4] if len(sys.argv) == 5 else 'random_optimizer'
-		print "Using " + method + " method to find and optimize a solution."
-		gen = Generator(max_n, max_m)
-		gen.generate_test_cases(c)
-		gen.print_test_cases(c)
-		gen.print_test_cases_to_file(c, 'testfile')
-		parser = Parser('testfile')
-		opt = Optimizer([0 for i in range(max_n)], [])
-		for i in range(c):
-			opt.case = parser.read_next_case()
-			opt.optimize(method)
-			print "Case #" + str(i + 1) + ": " + opt.get_solution()
-		os.remove('testfile')
+	opt_parser = argparse.ArgumentParser()
+
+	gen_group = opt_parser.add_argument_group('Generate')
+
+	gen_group.add_argument('-c', '--cases', dest='n_cases',
+                    nargs='?', type=int, 
+                    help='Number of test cases to generate.')
+
+	gen_group.add_argument('-N', '--colors', dest='n_colors',
+                    nargs='?', type=int, 
+                    help='Max number of colors in the case.')
+
+	gen_group.add_argument('-M', '--customers', dest='n_customers',
+                    nargs='?', type=int, 
+                    help='Max number of customers in the case')
+
+	gen_group.add_argument('-go', '--write_case', action='store', help="The output file to write the case.")
+
+	opt_group = opt_parser.add_argument_group('Solve and optimize')
+
+	opt_group.add_argument("-i", "--input", help="Solve a case from a case file.")
+	opt_group.add_argument("-o", "--output", help="Write solutions to a file.")
+	opt_group.add_argument("-m", "--method", help="Optimization method to use",
+						   choices=('random_optimizer', 'matte_minimizer'),
+						   default='random_optimizer', nargs='?')
+
+	args = opt_parser.parse_args()
+	
+	if args.n_cases:
+		write_case(args.n_cases, args.n_colors, args.n_customers, args.write_case)
+
+	if args.input:
+		read_and_solve_case(args.input, args.method, args.output)
+

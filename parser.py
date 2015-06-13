@@ -12,6 +12,7 @@ class Parser:
 	def __init__(self, filename):
 		self.f = open(filename, 'r')
 		self.c = int(self.f.readline())
+		self.n = 0
 
 	'''
 		Close the file.
@@ -37,6 +38,7 @@ class Parser:
 			self.finish()
 			return None
 		n = int(self.f.readline())
+		self.current_n = n
 		m = int(self.f.readline())
 		customers = []
 		for i in range(m):
