@@ -5,5 +5,6 @@
 python ./generator_test.py
 python ./optimizer_test.py
 python ./parser_test.py
+python ./solver_test.py
 python ./tester_test.py
 

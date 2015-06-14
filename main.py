@@ -1,6 +1,7 @@
 # Author: jkk.lapp@gmail.com, 2015
 
 from generator import Generator
+from solver import Solver
 from tester import Tester
 from parser import Parser
 from optimizer import Optimizer
@@ -17,16 +18,26 @@ def write_case(c, n, m, f=None):
 
 def read_and_solve_case(input, method, out=None):
 	parser = Parser(input)
-	opt = Optimizer([], [])
+	#opt = Optimizer([], [])
+	#tester = Tester()
+	solver = Solver(0, [])
 	if out:
 		output_file = open(out, 'w')
 	for i in range(parser.c):
-		opt.case = parser.read_next_case()
-		opt.solution = [0 for j in range(parser.current_n)]
-		opt.optimize(method)
-		print "Case #" + str(i + 1) + ": " + opt.get_solution()
-		if out:
-			output_file.write("Case #" + str(i + 1) + ": " + opt.get_solution())
+		solver.customers = parser.read_next_case()
+		solver.length = parser.current_n
+		#opt.solution = ['0' for j in range(parser.current_n)]
+		solver.compute_solutions()
+		sols = solver.solutions
+		#opt.optimize(method)
+		for s in sols:
+			if s != "IMPOSSIBLE":
+				solution_string = "Case #" + str(i + 1) + ": " + " ".join(s)
+			else:
+				solution_string = "Case #" + str(i + 1) + ": " + s
+			print solution_string
+			if out:
+				output_file.write(solution_string)
 	if out:
 		output_file.close()
 

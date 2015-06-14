@@ -31,3 +31,40 @@ This strategy generates a 'naive optimal solution', this is, a batch with all co
 ### Random minimizer
 
 This method randomly switches 1s by 0s and viceversa.
+
+### Method discussion
+
+Given the complexity of this SAT problem, I chose to use random methods to try and provide solutions.
+The matte_minimizer is a good strategy to try and optimize a valid solution but
+If the length of the solution is not very big however, I would use the random method.
+
+### Examples and performance 
+
+```
+python ./main.py -c 1 -N 10 -M 10 -go test_file
+1
+9
+5
+6 3 0 9 1 7 0 2 0 6 0 5 0
+6 7 0 5 1 1 0 2 0 3 0 4 0
+8 8 0 7 1 4 0 1 0 3 0 5 0 9 0 2 0
+2 8 1 1 0
+4 7 0 6 0 1 1 5 0
+```
+
+Run some tests using cProfile profiler to get execution time.
+
+```
+python -m cProfile ./main.py -i test_file -m random_optimizer
+Case #1: 0 0 0 0 0 0 0 0 0
+         26615 function calls (26583 primitive calls) in 0.054 seconds
+
+```
+
+Using the matte minimizer method:
+
+```
+python -m cProfile ./main.py -i test_file -m matte_minimizer
+Case #1: 0 0 0 0 0 0 0 0 0
+         26615 function calls (26583 primitive calls) in 0.057 seconds
+```

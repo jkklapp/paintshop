@@ -63,38 +63,25 @@ class TestTester(unittest.TestCase):
 		s11 = self.solution11
 		s12 = self.solution12
 		self.assertFalse(is_valid(s1, c1))
-		self.assertFalse(self.tester.impossible)
 		self.assertTrue(is_valid(s2, c1))
-		self.assertFalse(self.tester.impossible)
 		self.assertFalse(is_valid(s3, c1))
-		self.assertFalse(self.tester.impossible)
 		self.assertFalse(is_valid(s3, c2))
-		self.assertFalse(self.tester.impossible)
 		self.assertTrue(is_valid(s4, c2))
-		self.assertFalse(self.tester.impossible)
 		self.assertFalse(is_valid(s4, c1))
-		self.assertFalse(self.tester.impossible)
 		self.assertTrue(is_valid(s5, c3))
-		self.assertFalse(self.tester.impossible)
 		self.assertFalse(is_valid(s6, c3))
-		self.assertTrue(self.tester.impossible)
 		self.assertFalse(is_valid(s5, c4))
-		self.assertFalse(self.tester.impossible)
 		self.assertTrue(is_valid(s7, c4))
-		self.assertFalse(self.tester.impossible)
 		self.assertTrue(is_valid(s5, c5))
-		self.assertFalse(self.tester.impossible)
 		self.assertTrue(is_valid(s1, c6))
-		self.assertFalse(self.tester.impossible)
 		self.assertTrue(is_valid(s5, c6))
 		self.assertTrue(is_valid(s1, c7))
-		self.assertFalse(is_valid(s3, c7))
+		self.assertTrue(is_valid(s3, c7))
 		self.assertTrue(is_valid(s5, c7))
 		self.assertTrue(is_valid(s6, c7))
 		self.assertTrue(is_valid(s7, c7))
 		self.assertTrue(is_valid(s8, c8))
 		self.assertFalse(is_valid(s1, c9))
-		self.assertTrue(self.tester.impossible)
 		self.assertTrue(is_valid(s3, c10))
 		self.assertTrue(is_valid(s9, c10))
 		self.assertTrue(is_valid(s1, c11))
@@ -108,8 +95,23 @@ class TestTester(unittest.TestCase):
 		self.assertTrue(is_valid(s3, c14))
 		self.assertTrue(is_valid(s12, c14))
 
-
-
+	def test_solution_tester_bigger(self):
+		is_valid = self.tester.is_valid_solution
+		c = [['1 0', '6 1', '3 0', '4 0'],
+			['5 1', '2 0', '3 0', '6 0'], ['1 0', '5 1', '3 0', '4 0', '6 0'],
+			['2 1'], ['2 1', '1 0', '6 0', '3 0']]
+		sols = [['0', '1', '0', '0', '1', '0'],
+				['0', '1', '0', '1', '1', '0'],
+				['0', '1', '1', '0', '1', '0'],
+				['0', '1', '0', '0', '1', '1'],
+				['0', '1', '0', '0', '0', '0'],
+				['0', '1', '0', '1', '1', '1'],
+				['0', '1', '1', '0', '1', '1'],
+				['1', '1', '0', '0', '1', '1'],
+				['0', '1', '0', '0', '0', '1'],
+				['1', '1', '0', '0', '1', '0']]
+		for s in sols:
+			self.assertTrue(is_valid(s, c))
 
 if __name__ == '__main__':
     unittest.main()
