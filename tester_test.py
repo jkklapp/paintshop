@@ -21,6 +21,7 @@ class TestTester(unittest.TestCase):
 		self.customers12 = [['3 1', '2 0'], ['2 1'], ['2 1', '1 0']]
 		self.customers13 = [['2 1', '1 0'], ['2 0', '1 1']]
 		self.customers14 = [['3 0'], ['2 1', '1 0', '3 0']]
+		self.customers15 = [['1 0', '2 1'], ['1 1', '2 0'], ['3 0']]
 		self.solution1 = ['0', '0', '0']
 		self.solution2 = ['1', '0', '0']
 		self.solution3 = ['0', '1', '0']
@@ -50,6 +51,7 @@ class TestTester(unittest.TestCase):
 		c12 = self.customers12
 		c13 = self.customers13
 		c14 = self.customers14
+		c15 = self.customers15
 		s1 = self.solution1
 		s2 = self.solution2
 		s3 = self.solution3
@@ -94,6 +96,11 @@ class TestTester(unittest.TestCase):
 		self.assertTrue(is_valid(s1, c14))
 		self.assertTrue(is_valid(s3, c14))
 		self.assertTrue(is_valid(s12, c14))
+		self.assertTrue(is_valid(s12, c15))
+		self.assertTrue(is_valid(s1, c15))
+		self.assertFalse(is_valid(s2, c15))
+		self.assertFalse(is_valid(s3, c15))
+
 
 	def test_solution_tester_bigger(self):
 		is_valid = self.tester.is_valid_solution

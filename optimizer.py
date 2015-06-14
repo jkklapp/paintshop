@@ -15,6 +15,7 @@ class Optimizer:
 	"""
 	def __init__(self, solution, case):
 		self.solution = solution
+		self.current_mattes = sum([int(x) for x in solution])
 		self.case = case
 		self.tester = Tester()
 		self.valid_solution = False
@@ -51,11 +52,18 @@ class Optimizer:
 			position switched.
 	'''
 	def change_solution(self, solution, i):
-		if solution[i] == '1':
-			solution[i] = '0'
-		else:
-			solution[i] = '1'
+		solution[i] = '1' if solution[i] == '0' else '0'
 		return solution
+
+	'''
+		Checks if the solution has improved
+	'''
+	def solution_improved(self, s):
+		candidate_mattes = sum([int(x) for x in s])
+		if self.valid_solution and candidate_mattes < self.current_mattes:
+			self.current_mattes = candidate_mattes
+			return True
+		return False
 
 	'''
 		Uses inspection to optimize randomly a solution.
@@ -74,12 +82,11 @@ class Optimizer:
 		case = self.case
 		s = self.solution
 		for k in range(i):
-			valid = self.tester.is_valid_solution(self.solution, case)
-			if valid:
+			self.valid_solution = self.tester.is_valid_solution(self.solution, case)
+			if self.solution_improved(self.solution):
 				break
 			self.solution = self.change_solution(s, k % len(s))
 		self.steps += i
-		self.valid_solution = valid
 
 	'''
 		Tries to improve a solution incrementally.
@@ -90,7 +97,7 @@ class Optimizer:
 		Args:
 			solution: A solution candidate. None will use the optimal naive solution.
 		Returns
-			The first solution that satisfies.
+			The solution that satisfies with the least number of 1s.
 	'''
 	def matte_minimizer(self):
 		solution = self.solution
@@ -99,27 +106,25 @@ class Optimizer:
 		i = 0
 		while i < len(solution):
 			solution = self.change_solution(solution, i)
-			i += 1
-			if not tester.is_valid_solution(solution, case):
-				solution = self.change_solution(solution, i-1)
+			self.valid_solution = tester.is_valid_solution(solution, case)
+			if self.solution_improved(solution):
+				self.solution = solution
 			else:
-				self.valid_solution = True
-				break
-		self.steps += i
-		self.solution = solution
+				solution = self.change_solution(solution, i)
+			i += 1
+		self.steps = i
 
 	'''
 		Executes the optmization:
 	'''
-	def optimize(self, method):
+	def optimize(self, method=None):
+		if not method:
+			method = 'random_optimizer'
 		self.original_solution = self.solution
 		self.valid_solution = self.tester.is_valid_solution(self.solution, self.case)
 		self.steps = 0
-		while self.steps < pow(2, len(self.solution)):
-			if self.valid_solution or self.tester.impossible:
-				break
-			else:
-				self.METHODS[method]()
+		if not self.tester.impossible:
+			self.METHODS[method]()
 
 	'''
 		Prints results

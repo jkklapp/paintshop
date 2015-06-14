@@ -46,12 +46,25 @@ class Solver:
 	def get_optimal_solution(self):
 		if not self.solutions:
 			self.compute_solutions(self.customers)
+		if self.impossible:
+			return "IMPOSSIBLE"
 		sols = self.solutions
 		for i in range(self.length):
 			for s in sols:
 				total = sum(int(x) for x in s)
 				if total == i:
 					return s
+
+	'''
+		Get a random solution
+	'''
+	def get_random_solution(self):
+		if not self.solutions:
+			self.compute_solutions(self.customers)
+		if self.impossible:
+			return "IMPOSSIBLE"
+		return self.solutions[0]
+
 
 	'''
 		Generates all valid solutions
@@ -69,7 +82,6 @@ class Solver:
 		length = self.length
 		if length < len(customers):
 			self.impossible = True
-			self.solutions.append("IMPOSSIBLE")
 			return False
 		self.impossible = False
 		products = [list(y) for y in [x for x in product(*customers)]]

@@ -6,18 +6,14 @@ from optimizer import Optimizer
 class TestOptimizer(unittest.TestCase):
 
 	def setUp(self):
-		self.opt = Optimizer(['0', '0', '0'], [['1 0', '2 0'], ['1 1'], ['3 0']])
+		self.opt = Optimizer(['1', '1', '1'],
+							 [['1 1', '2 0', '3 1'], ['1 0', '2 1', '3 1'], ['1 0', '3 0', '2 1']])
 
 	def test_matte_minimizer(self):
 		self.opt.matte_minimizer()
-		self.assertEqual(self.opt.steps, 1)
-		self.assertEqual(self.opt.solution, ['1', '0', '0'])
-		self.opt.solution = ['0', '0', '0']
-		self.opt.case = [['1 1', '2 1'], ['1 0'], ['3 0']]
-		self.opt.matte_minimizer()
+		self.assertEqual(self.opt.solution, ['0', '0', '0'])
 		self.assertEqual(self.opt.steps, 3)
-		self.assertEqual(self.opt.solution, ['0', '1', '0'])
-
+		
 	def test_random_optimizer(self):
 		self.opt.solution = ['0', '0', '0', '0']
 		self.opt.case = [['1 1', '2 1', '3 0'], ['1 0', '3 1'], ['3 0', '4 1'], ['2 0', '4 0']]

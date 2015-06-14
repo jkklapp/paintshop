@@ -37,8 +37,6 @@ class Tester:
 			False otherwise.
 	'''
 	def check_solution_for_perm(self, solution, customers):
-		if not customers:
-			customers = self.customers
 		self.impossible = False
 		customer_satisfaction = [False for i in range(len(customers))]
 		already_sold = []
