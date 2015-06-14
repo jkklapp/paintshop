@@ -13,6 +13,14 @@ class Solver:
 	
 	'''
 		Sorts customer types by color in ascending order.
+
+		Args:
+			x: First customer type
+			y: Second customer type
+
+		Returns:
+			1 if the color of the x type is lower
+			than the y type
 	'''
 	def sort_types(self, x, y):
 		return 1 if int(x.split()[0]) > int(y.split()[0]) else -1
@@ -20,6 +28,13 @@ class Solver:
 	'''
 		Expands a candidate solution to the max number of
 		colors.
+
+		Args:
+			candidate: A customer type 
+			expanded_candidates: A list of all possible customer types.
+
+		Returns:
+			A list of expanded candidates of the current case.
 	'''
 	def merge_with_expanded(self, candidate, expanded_candidates):
 		for t in candidate:
@@ -31,6 +46,12 @@ class Solver:
 
 
 	'''
+		Removes products that have repeated colors
+
+		Args:
+			products: A list of customer types
+		Returns:
+			A list of customer types without repetitions in colors.
 	'''
 	def get_rid_of_useless_products(self, products):
 		filtered_products = []
@@ -42,6 +63,9 @@ class Solver:
 
 	'''
 		Get best solution
+
+		Returns:
+			The solution with least number of 1s.
 	'''
 	def get_optimal_solution(self):
 		if not self.solutions:
@@ -57,6 +81,9 @@ class Solver:
 
 	'''
 		Get a random solution
+
+		Returns:
+			The first solution in the solutions list.
 	'''
 	def get_random_solution(self):
 		if not self.solutions:

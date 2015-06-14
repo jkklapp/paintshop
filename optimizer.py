@@ -57,6 +57,14 @@ class Optimizer:
 
 	'''
 		Checks if the solution has improved
+
+		Args:
+			solution: An array with 0s and 1s.
+
+		Returns:
+			True if the solution is still valid
+			and the number of 1s has decreased.
+			False otherwise.
 	'''
 	def solution_improved(self, s):
 		candidate_mattes = sum([int(x) for x in s])
@@ -83,9 +91,12 @@ class Optimizer:
 		s = self.solution
 		for k in range(i):
 			self.valid_solution = self.tester.is_valid_solution(self.solution, case)
-			if self.solution_improved(self.solution):
-				break
-			self.solution = self.change_solution(s, k % len(s))
+			pos = randint(0, len(solution)-1)
+			s = self.change_solution(s, pos)			
+			if self.solution_improved(s):
+				self.solution = s
+			else:
+				s = self.change_solution(s, pos)
 		self.steps += i
 
 	'''
@@ -116,11 +127,13 @@ class Optimizer:
 
 	'''
 		Executes the optmization:
+
+		Args:
+			method: The name of your optimization method.
 	'''
 	def optimize(self, method=None):
 		if not method:
 			method = 'random_optimizer'
-		self.original_solution = self.solution
 		self.valid_solution = self.tester.is_valid_solution(self.solution, self.case)
 		self.steps = 0
 		if not self.tester.impossible:
