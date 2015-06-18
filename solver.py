@@ -5,62 +5,13 @@ from itertools import combinations_with_replacement as comb
 
 class Solver:
 
-	def __init__(self, length, customers):
+	def __init__(self, length, customers, get_the_first=False):
 		self.impossible = False
 		self.solutions = []
 		self.customers = customers
 		self.length = length
+		self.return_first = get_the_first
 	
-	'''
-		Sorts customer types by color in ascending order.
-
-		Args:
-			x: First customer type
-			y: Second customer type
-
-		Returns:
-			1 if the color of the x type is lower
-			than the y type
-	'''
-	def sort_types(self, x, y):
-		return 1 if int(x.split()[0]) > int(y.split()[0]) else -1
-
-	'''
-		Expands a candidate solution to the max number of
-		colors.
-
-		Args:
-			candidate: A customer type 
-			expanded_candidates: A list of all possible customer types.
-
-		Returns:
-			A list of expanded candidates of the current case.
-	'''
-	def merge_with_expanded(self, candidate, expanded_candidates):
-		for t in candidate:
-			i = int(t.split()[0]) - 1
-			variety = t.split()[1]
-			for e in expanded_candidates:
-				e[i] = variety
-		return expanded_candidates
-
-
-	'''
-		Removes products that have repeated colors
-
-		Args:
-			products: A list of customer types
-		Returns:
-			A list of customer types without repetitions in colors.
-	'''
-	def get_rid_of_useless_products(self, products):
-		filtered_products = []
-		for p in products:
-			colors_in_product = [x.split()[0] for x in p]
-			if len(colors_in_product) == len(set(colors_in_product)):
-				filtered_products.append(p)
-		return filtered_products
-
 	'''
 		Get best solution
 
@@ -73,7 +24,7 @@ class Solver:
 		if self.impossible:
 			return "IMPOSSIBLE"
 		sols = self.solutions
-		for i in range(self.length):
+		for i in range(0, self.length+1):
 			for s in sols:
 				total = sum(int(x) for x in s)
 				if total == i:
@@ -92,6 +43,61 @@ class Solver:
 			return "IMPOSSIBLE"
 		return self.solutions[0]
 
+	'''
+		Tells if an expansion was valid
+
+		If the candidate is invalid it can be detected 
+		in each step of the expansion..
+
+		Returns:
+			True if it is valid, False otherwise
+	'''
+	def invalid_expansion_detected(self, expanded, insertion):
+		index = expanded.index(insertion)
+		if len(expanded) > 2 and index != len(expanded) - 1 and index != 0:
+			return expanded[index-1][0] == expanded[index+1][0]
+
+	'''
+		Expands a candidate to the length of a 
+		solution
+
+		Args:
+			c: A simple candidate from a product.
+
+		Returns:
+			The candidate with 0 for the colors
+			that were not present originally.
+
+	'''
+	def expand_a_candidate(self, candidate):
+		expanded = []
+		for t in candidate:
+			index = int(t[0]) - 1
+			expanded.insert(index, t)
+			if self.invalid_expansion_detected(expanded, t):
+				return None
+		for i in range(1, self.length):
+			if expanded[i-1][0] != str(i):
+				insertion = str(i) + " 0"
+				expanded.insert(i-1, insertion)
+				if self.invalid_expansion_detected(expanded, insertion):
+					return None
+		if len(expanded) != self.length:
+			return None
+		return expanded
+
+	'''
+		Gets the varieties of a candidate
+
+		Args:
+			c: A valid candidate with types
+			in order.
+
+		Returns:
+			A list of varieties.
+	'''
+	def candidate_to_solution(self, c):
+		return [x.split()[1] for x in c]
 
 	'''
 		Generates all valid solutions
@@ -111,13 +117,17 @@ class Solver:
 			self.impossible = True
 			return False
 		self.impossible = False
-		products = [list(y) for y in [x for x in product(*customers)]]
-		p = self.get_rid_of_useless_products(products)
-		all_possible_sols = []
-		for candidate in p:
-			expanded_candidates = [list(x) for x in comb(('0', '1'), length)]
-			new_candidates = self.merge_with_expanded(candidate, expanded_candidates)
-			for new_candidate in new_candidates:
-				if new_candidate not in all_possible_sols:
-					all_possible_sols.append(new_candidate)
-		self.solutions = all_possible_sols
+		self.solutions = []
+		for p in product(*customers):
+			p = list(p)
+			p = self.expand_a_candidate(p)
+			if not p:
+				continue
+			p = self.candidate_to_solution(p)
+			if p not in self.solutions:						
+				self.solutions.append(p)
+				if self.return_first:
+					return True
+		if not self.solutions:
+			self.impossible = True
+			return False

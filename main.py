@@ -16,9 +16,9 @@ def write_case(c, n, m, f=None):
 	if f:
 		gen.print_test_cases_to_file(c, f)
 
-def read_and_solve_case(input, out=None, best=False):
+def read_and_solve_case(input, out=None, best=False, first=False):
 	parser = Parser(input)
-	solver = Solver(0, [])
+	solver = Solver(0, [], first)
 	if out:
 		output_file = open(out, 'w')
 	for i in range(parser.c):
@@ -85,6 +85,7 @@ if __name__ == '__main__':
 
 	sol_group = opt_parser.add_argument_group('Solve')
 	sol_group.add_argument("-b", "--best", action="store_true", default=False, help="Get always the best solution, as opposed to a random one.")
+	sol_group.add_argument("-f", "--get-first-found", action="store_true", default=False, help="Get always the best solution, as opposed to a random one.")
 	
 	opt_group = opt_parser.add_argument_group('Optimize solution')
 
@@ -97,7 +98,7 @@ if __name__ == '__main__':
 		write_case(args.n_cases, args.n_colors, args.n_customers, args.output)
 
 	if args.input and not args.solution_file:
-		read_and_solve_case(args.input, args.output, args.best)
+		read_and_solve_case(args.input, args.output, args.best, args.get_first_found)
 
 	if args.solution_file:
 		print "opt"
