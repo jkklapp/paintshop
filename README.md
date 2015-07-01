@@ -123,7 +123,7 @@ For a generated test case file and a non-optimal solutions file, we invoke the o
 get better solutions.
 
 ```
-Jaakkos-MacBook-Pro:paintshop jaakko$ python ./main.py -i test_file -s solutions.test -m matte_minimizer
+$ python ./main.py -i test_file -s solutions.test -m matte_minimizer
 opt
 Skipping case #1  IMPOSSIBLE
 For case:
